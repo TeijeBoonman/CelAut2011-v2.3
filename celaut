@@ -1,0 +1,43 @@
+libdir=/Users/roel/Celaut/tmp/celaut/lib
+
+if test $libdir = `pwd`
+then
+  echo Do not run CELAUT from the CELAUT-directory
+  exit
+fi
+
+if test $# = 0 
+then
+  echo "Usage: celaut -oma file"
+  exit
+fi
+
+if test $# = 1 
+then
+  echo "Usage: celaut -oma file"
+  exit
+fi
+
+m=$2
+o=$1
+a=$3
+
+case $o in
+    -o) g="$libdir/onelayer.a";;
+    -m) g="$libdir/multilayer.a";;
+    -a) g="$libdir/animat.a";;
+    -*) echo "Unknown argument $o"; exit;
+esac
+ 
+if test ! -f $g
+then
+  echo "missing librabry:  $g"
+  echo "goto celaut root directory and type: make install"
+  exit
+fi
+
+echo "please wait for compilation of:  $m"
+
+export CELAUTLIB=$g
+make $m
+./$m
