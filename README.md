@@ -5,7 +5,7 @@ This is a simple cellular automata library written in C.
 It derived from an old code that was in use at the Theoretical Biology group Utrecht University in the 1990s, and has been often modified since. 
 
 
-# Cellular automata simulations with CelAut {#cellular-automata-simulations-with-celaut .unnumbered}
+# Cellular automata simulations with CelAut
 
 *CelAut2011* handles both single layer, and multilayer cellular automata
 (CA). *eden.c*, *vote.c* en *prime.c* are examples of single layer CA,
@@ -13,13 +13,13 @@ whereas *dla.c* and *turing.c* are examples of multilayer CAs. To run a
 CA program, type into a terminal:
 
 -   `celaut -o [name]` for *single-layer* CA (e.g., `celaut -o eden`;
-    with -o for 'one layer')
+    with -o for ’one layer’)
 
 -   `celaut -m [name]` for *multilayer* CA (e.g., `celaut -o turing`;
-    with -m for 'multilayer')
+    with -m for ’multilayer’)
 
-CelAut will respond in the terminal as follows:\
-`Enter control:`\
+CelAut will respond in the terminal as follows:  
+`Enter control:`  
 `h` of `?` will give you a list with possible control codes.
 
 To start the simulation of the CA, type: `c`.
@@ -27,13 +27,13 @@ To start the simulation of the CA, type: `c`.
 Double-click on the CA-window to stop the simulations and enter a new
 control code into the terminal Window.
 
-Move to the 'examples' folder of your 'celaut' installation, probably:
+Move to the ‘examples’ folder of your ’celaut’ installation, probably:
 
 `cd ~/Download/celaut/examples`
 
 and type, `celaut -o [MYCA]` to compile and run your CA. For example:
 
-`celaut -o 2dca` (-o voor "single layer")
+`celaut -o 2dca` (-o voor ”single layer”)
 
 The software responds:
 
@@ -57,23 +57,23 @@ Start the simulation of the CA by typing `c`.
 To stop the simulation and choose an alternative control code,
 double-click on the graphics window.
 
-## Defining your own CA-rules {#defining-your-own-ca-rules .unnumbered}
+## Defining your own CA-rules
 
-Most of time you will be defining your own CA-rules. To do so, it's
+Most of time you will be defining your own CA-rules. To do so, it’s
 easiest to copy one of the examples (e.g., `eden.c`) to a new file, and
 edit that. The CA-definition code will call a number of standard
 functions of *CelAut2011*.
 
-## Format of CA-definition {#format-of-ca-definition .unnumbered}
+## Format of CA-definition
 
 `InitConstants();`
 
-> This is were you'll define a number constants (e.g., parameters)
+> This is were you’ll define a number constants (e.g., parameters)
 
 `InitGraphs();` (only for multilayer CAs)
 
 > This is were you can define some settings for the graphics windows,
-> but it's rarely used in practice.
+> but it’s rarely used in practice.
 
 `InitSpecies();`
 
@@ -110,7 +110,7 @@ functions of *CelAut2011*.
 >
 > Leave this unchanged.
 
-## Pattern files {#pattern-files .unnumbered}
+## Pattern files
 
 If you want to define an initial condition for your CA, you can define a
 `pattern file`. It is a text-file with the following format:
@@ -120,7 +120,7 @@ If you want to define an initial condition for your CA, you can define a
 To read a pattern file from within `‘celaut’` choose option `’p’` from
 the menu.
 
-## Defining your own CA {#defining-your-own-ca .unnumbered}
+## Defining your own CA
 
 To define a cellular automata model with your own rules, follow these
 steps. First, copy the definition (C-source) of an existing CA to a new
@@ -164,7 +164,7 @@ The rest of the definition is set up as follows:
 
 > `Onelayer();` of `Multilayer();`
 
-## Overview of functions to be used in CelAut {#overview-of-functions-to-be-used-in-celaut .unnumbered}
+## Overview of functions to be used in CelAut
 
 Initialisation functions:
 
@@ -174,65 +174,77 @@ Initialisation functions:
 >
 > `ReadPatternFile();`
 >
-> > read in a pattern file (e.g., 'loper')
+> > read in a pattern file (e.g., ’loper’)
 
 Random functions:
 
 > `int RandomNumber(n);`
 >
-> > returns an integer random number in $[ 1,n ]$
+> > returns an integer random number in \[1,*n*\]
 >
 > `double Uniform();`
 >
-> > returns a random, real number in $[0,1\rangle$
+> > returns a random, real number in \[0, 1⟩
 
 Neighborhood functions:
 
-> ::: tabbing
-> \
+> <div class="tabbing">
+>
+>   
 > `Moore(x,y);` Moore(k,x,y);
-> :::
+>
+> </div>
 >
 > > returns the sum of the states of the 8, first and second order
 > > neighbors of cell `(x,y)`.
 >
-> ::: tabbing
-> \
-> **Single layer** **Multilayer**\
+> <div class="tabbing">
+>
+>   
+> **Single layer** **Multilayer**  
 > `CountMoore(n,x,y);` `CountMoore(k,n,x,y);`
-> :::
 >
-> > returns the number of neighbors in state 'n' (of the 8 neighbors).
+> </div>
 >
-> ::: tabbing
-> \
+> > returns the number of neighbors in state ’n’ (of the 8 neighbors).
+>
+> <div class="tabbing">
+>
+>   
 > `RandMoore(x,y);` `RandMoore(k,x,y);`
-> :::
+>
+> </div>
 >
 > > returns the state of a random neighbor (out of eight neighbors)
 >
-> ::: tabbing
-> \
+> <div class="tabbing">
+>
+>   
 > `Vonn(x,y);` `Vonn(k,x,y);`
-> :::
+>
+> </div>
 >
 > > returns the sum of the states of the 4, first order neighbors of
 > > cell `(x,y)`.
 
 Plotting functions:
 
-::: tabbing
-\
-`DrawField();` `DrawLayer(k);`\
-plots the state to graphics window plots the $k^{th}$ layer
-:::
+<div class="tabbing">
 
-::: tabbing
-\
-`WriteField([filename.png]);` `WriteLayer([filename.png],k);`\
-Plots the state to file \[filename\] plots the state of the $k^{th}$
-layer to file \[filename\]\
-:::
+  
+`DrawField();` `DrawLayer(k);`  
+plots the state to graphics window plots the *k*<sup>*t**h*</sup> layer
+
+</div>
+
+<div class="tabbing">
+
+  
+`WriteField([filename.png]);` `WriteLayer([filename.png],k);`  
+Plots the state to file \[filename\] plots the state of the
+*k*<sup>*t**h*</sup> layer to file \[filename\]  
+
+</div>
 
 > In multiple layers, use `InitGraphs();` to tell the system what layer
 > must be drawn in what window, as follows:
@@ -240,8 +252,8 @@ layer to file \[filename\]\
 > `graph[w]=k; ` tells the system that layer `k` will be drawn in window
 > `w`.
 
-`DrawPopDyn(n1,n2,xaxis,yaxis,color); `\
-`DrawPopDyn(k1,n1,k2,n2,xaxis,yaxis,color); `\
+`DrawPopDyn(n1,n2,xaxis,yaxis,color); `  
+`DrawPopDyn(k1,n1,k2,n2,xaxis,yaxis,color); `  
 
 > This function graphs the numbers of species while the simulation is
 > running.
@@ -257,19 +269,21 @@ layer to file \[filename\]\
 > To use this function, in `InitConstants();` add: `popdyn=1; `, and add
 > to the list `extern int`: `popdyn`.
 
-::: tabbing
-\
-`DrawSpaceTime(y);` `DrawSpaceTime(k,y); `
-:::
+<div class="tabbing">
 
-> Produces a "space time window" (or kymograph) of the CA at position
-> 'y'.
+  
+`DrawSpaceTime(y);` `DrawSpaceTime(k,y); `
+
+</div>
+
+> Produces a “space time window” (or kymograph) of the CA at position
+> ’y’.
 >
 > Assing the desired length of the space time window is to the constant
 > `spacetime` in `InitConstants();`. Also add `spacetime` to the list
 > `extern int`.
 
-## Functions writing to your terminal: {#functions-writing-to-your-terminal .unnumbered}
+## Functions writing to your terminal:
 
 > `EchoTime();`
 >
@@ -279,45 +293,53 @@ layer to file \[filename\]\
 >
 > > Writes the current numbers of species
 
-## Functions writing to a file: {#functions-writing-to-a-file .unnumbered}
+## Functions writing to a file:
 
 > `RecordNumber();`
 >
 > > Writes the numbers of cells that are in each state to file
 > > `num.dat`.
 >
-> ::: tabbing
-> \
-> `RecordGrowth(n);` `RecordGrowth(k,n);`
-> :::
+> <div class="tabbing">
 >
-> > Writes the number and growth per individual of state 'n' to the file
-> > 'growth.n'
+>   
+> `RecordGrowth(n);` `RecordGrowth(k,n);`
+>
+> </div>
+>
+> > Writes the number and growth per individual of state ’n’ to the file
+> > ’growth.n’
 >
 > `RecordState();`
 >
-> > Writes the current states to file '`state.time`'
+> > Writes the current states to file ’`state.time`’
 
-## Other functions: {#other-functions .unnumbered}
+## Other functions:
 
-> ::: tabbing
-> \
+> <div class="tabbing">
+>
+>   
 > `Diffuse();` `Diffuse(k);`
-> :::
+>
+> </div>
 
 > Perform a Margolus diffusion step
 
-::: tabbing
-\
+<div class="tabbing">
+
+  
 `DiffuseStop(k,l);`
-:::
+
+</div>
 
 > Performs a Margolus diffusion step; no diffusion at `(x,y)` if there
-> is a `1` in layer 'l' at `(x,y)`.
+> is a `1` in layer ’l’ at `(x,y)`.
 
-::: tabbing
-\
+<div class="tabbing">
+
+  
 `ReShuffle();` `ReShuffle(k);`
-:::
+
+</div>
 
 > Mixes all states in the CA.
