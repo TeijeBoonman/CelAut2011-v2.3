@@ -1,0 +1,12 @@
+int RandMoore(int x,int y);
+int Moore(int x,int y);
+int CountMoore(int n,int x,int y);
+int RandVonn(int x,int y);
+int Vonn(int x,int y);
+int CountVonn(int n,int x,int y);
+void AsynTorus(int x,int y);
+void AsynEcho(int x,int y);
+ void TurnRight(int x,int y);
+void TurnLeft(int x,int y);
+ void DoTurn(int x,int y);
+ void RecordGrowth(int spec);

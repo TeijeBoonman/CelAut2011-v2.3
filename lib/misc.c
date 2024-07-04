@@ -1,6 +1,6 @@
 #include <math.h>
 #include <stdio.h>
-
+#include "misc.h"
 #define MBIG 1000000000
 #define MSEED 161803398
 #define MZ 0
@@ -114,12 +114,12 @@ int boolean() /*irbit1*/
 #undef IB5
 #undef IB18
 
-double Normal(mean,stdev) double mean,stdev;
+double Normal(double mean,double stdev)
 {
   return gasdev()*stdev + mean;
 }
 
-int SetSeed(seed) int seed;
+int SetSeed(int seed)
 {
   int i;
   idum = -seed;

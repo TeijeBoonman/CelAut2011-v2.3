@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "x11_ol.h"
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
@@ -201,8 +201,7 @@ void PHMakeColorMap()
 		XAllocColor(phdisplay,new_colormap,&colors[i]);
 }
 
-int OpenGraphics(w,h) 
-int w,h;
+int OpenGraphics(int w, int h)
 {
  int i;
  char **argv;
@@ -377,8 +376,7 @@ int OpenPopDyn()
   return (0);
 }
 
-int OpenSpaceTime(axt) 
-int axt;
+int OpenSpaceTime(int axt)
 {
  int i;
  char **argv;
@@ -481,8 +479,7 @@ int DrawField()
      XPutImage(display,window,windowGC,image,0,0,0,0,image->width,image->height);
 }
 
-int DrawSpaceTime(ypos)
-int ypos;
+int DrawSpaceTime(int ypos)
 {
     int x,mx,my;
     long offset=0;
@@ -502,8 +499,7 @@ int ypos;
      XPutImage(stdisplay,stwindow,stwindowGC,stimage,0,0,0,0,stimage->width,stimage->height);
 }
 
-int DrawPopDyn(sx,sy,axx,axy,popdyncol)
-int sx,sy,axx,axy,popdyncol;
+int DrawPopDyn(int sx, int sy, int axx, int axy, int popdyncol)
 {
     int x,y;
     int px=0,py=0;
@@ -557,8 +553,7 @@ int ClearSpaceTime()
     XPutImage(stdisplay,stwindow,stwindowGC,stimage,0,0,0,0,stimage->width,stimage->height);
 }
 
-int Majority(x,y)
-int x,y;
+int Majority(int x, int y)
 {
     int p,q,n,max=0,major=0;
     int num[256];
@@ -631,12 +626,10 @@ void WriteField(char *fname) {
 				 8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
 				 PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 	png_write_info(png_ptr,info_ptr);
-	
 	// data to hold true colour image
 	unsigned char *png_image =
     (unsigned char *)malloc(3*scale*scale*xfield*yfield*sizeof(unsigned char));
-	
-	/*int colormap_size=256;
+	/* int colormap_size=256;
      static XColor *png_colors=0;
      if (!png_colors) {
      // We allocate colors upon the first call only
@@ -654,7 +647,7 @@ void WriteField(char *fname) {
      col =png_colors[i];
      fprintf(stderr, "Color %d: %d, %d, %d\n",i,col.red,col.green,col.blue);
      }
-     }*/
+     } */
 
     int x,y,mx,my;
 	for (y=1;y <= yfield; y++)  {
@@ -662,7 +655,6 @@ void WriteField(char *fname) {
 			for (x=1; x <= xfield;x++) {
                 
 				for (mx=0; mx < scale; mx++) {
-					
 					XColor col;
 					col=colors[state[x][y]];
 					//fprintf(stderr,"[ %d: %d, %d, %d ]",state[x][y], col.red,col.green,col.blue );
@@ -676,7 +668,6 @@ void WriteField(char *fname) {
 			png_write_rows(png_ptr, &ptr, 1);
 		}
 	}
-    
     
 	png_write_end(png_ptr, info_ptr);
     png_destroy_write_struct(&png_ptr,(png_infopp)NULL);

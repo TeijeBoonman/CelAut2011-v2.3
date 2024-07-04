@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "control_ml.h"
 
 char ***state;
 char ***newstate;
@@ -23,7 +24,7 @@ extern int stline;
 /* neighbor procedures */
 
 
-int RandMoore(k,x,y) int k,x,y;
+int RandMoore(int k, int x, int y)
 {
     int ran;
 
@@ -31,7 +32,7 @@ int RandMoore(k,x,y) int k,x,y;
     return(state[k][x+nx[ran]][y+ny[ran]]);
 }
 
-int Moore(k,x,y) int k,x,y;
+int Moore(int k, int x, int y) 
 {
     int sum = 0,i;
 
@@ -40,7 +41,7 @@ int Moore(k,x,y) int k,x,y;
     return(sum);
 }
 
-int CountMoore(k,n,x,y) int k,n,x,y;
+int CountMoore(int k, int n, int x, int y)
 {
     int sum = 0,i;
 
@@ -49,7 +50,7 @@ int CountMoore(k,n,x,y) int k,n,x,y;
     return(sum);
 }
 
-int RandVonn(k,x,y) int k,x,y;
+int RandVonn(int k, int x, int y)
 {
     int ran;
 
@@ -57,7 +58,7 @@ int RandVonn(k,x,y) int k,x,y;
     return(state[k][x+nx[ran]][y+ny[ran]]);
 }
 
-int Vonn(k,x,y) int k,x,y;
+int Vonn(int k, int x, int y)
 {
     int sum = 0,i;
 
@@ -66,7 +67,7 @@ int Vonn(k,x,y) int k,x,y;
     return(sum);
 }
 
-int CountVonn(k,n,x,y) int k,n,x,y;
+int CountVonn(int k, int n, int x, int y)
 {
     int sum = 0,i;
 
@@ -75,7 +76,7 @@ int CountVonn(k,n,x,y) int k,n,x,y;
     return(sum);
 }
 
-void CopyLayer(k,l) int k,l;
+void CopyLayer(int k, int l)
 {
      int x,y;
 
@@ -91,7 +92,7 @@ void InitRand()
 
 /* border procedures */
 
- void AsynTorus(x,y) int x,y;
+void AsynTorus(int x, int y)
  {
       int k;
 
@@ -107,7 +108,7 @@ void InitRand()
       }
  }
 
- void AsynEcho(x,y) int x,y;
+void AsynEcho(int x, int y)
  {
       int k;
 
@@ -143,7 +144,7 @@ void InitRand()
     }
  }
 
- void TorusLayer(k) int k;
+void TorusLayer(int k)
  {
       int i;
 
@@ -183,7 +184,7 @@ void InitRand()
 
  /* diffusion */
 
- void TurnLeft(k,x,y) int k,x,y;
+void TurnLeft(int k, int x, int y)
  {
       char dummy;
 
@@ -194,7 +195,7 @@ void InitRand()
       state[k][x+1][y] = dummy;
  }
 
- void TurnRight(k,x,y) int k,x,y;
+void TurnRight(int k, int x, int y)
  {
       char dummy;
 
@@ -205,7 +206,7 @@ void InitRand()
       state[k][x][y+1] = dummy;
  }
 
- void DoTurn(k,x,y) int k,x,y;
+ void DoTurn(int k, int x, int y)
  {
       if (stop == -1) {
 	 if (Uniform() < 0.5)
@@ -222,7 +223,7 @@ void InitRand()
       }
  }
 
-void DoTurnTogether(k1,k2,x,y) int k1,k2,x,y;
+void DoTurnTogether(int k1, int k2, int x, int y)
 {
     if (stop == -1) {
         if (Uniform() < 0.5) {
@@ -247,7 +248,7 @@ void DoTurnTogether(k1,k2,x,y) int k1,k2,x,y;
     }
 }
 
- void SetBoundaries(k) int k;
+ void SetBoundaries(int k)
  {
       int i;
 
@@ -261,7 +262,7 @@ void DoTurnTogether(k1,k2,x,y) int k1,k2,x,y;
       }
  }
 
- void Diffuse(k) int k;
+ void Diffuse(int k)
  {
       int i,x,y,start=0,endx=xfield-1,endy=yfield-1;
 
@@ -317,7 +318,7 @@ void DiffuseTogether(int k1, int k2)
 }
 
 
- void DiffuseStop(k,l) int k,l;
+ void DiffuseStop(int k,int l)
  {
      stop = l;
      Diffuse(k);
@@ -325,7 +326,7 @@ void DiffuseTogether(int k1, int k2)
  }
 
 
-void ReShuffle(k) int k;
+void ReShuffle(int k)
 {
      int x,y;
      int i,j;
@@ -350,7 +351,7 @@ void ReShuffle(k) int k;
 /* initialisatie procedures */
 
 
- void InitRandomLayer(k) int k;
+ void InitRandomLayer(int k)
  {
       int  x,y,n,i;
       float perc[256];
@@ -577,7 +578,7 @@ void RecordNumber()
      fclose(fp);
  }
 
- void RecordGrowth(k,spec) int k,spec;
+ void RecordGrowth(int k,int spec)
  {
       FILE *fopen(), *fp;
       char name[50];

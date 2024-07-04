@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "x11_ml.h"
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include "readpng.h"
@@ -256,8 +256,7 @@ void PHMakeColorMap()
 		XAllocColor(phdisplay,new_colormap,&colors[i]);
 }
 
-int OpenGraphics(w,h) 
-int w,h;
+int OpenGraphics(int w, int h)
 {
  int i,k;
  char **argv;
@@ -444,8 +443,7 @@ int OpenPopDyn()
   return (0);
 }
 
-int OpenSpaceTime(axt) 
-int axt;
+int OpenSpaceTime(int axt)
 {
  int i;
  char **argv;
@@ -593,8 +591,7 @@ int DrawField()
      XPutImage(display[kk],window[kk],windowGC[kk],image[kk],0,0,0,0,image[kk]->width,image[kk]->height);
 }
 
-int DrawPopDyn(layx,sx,layy,sy,axx,axy,popdyncol)
-int sx,sy,layx,layy,axx,axy,popdyncol;
+int DrawPopDyn(int layx, int sx, int layy, int sy, int axx, int axy, int popdyncol)
 {
     int x,y;
     int px=0,py=0;
@@ -624,8 +621,7 @@ int sx,sy,layx,layy,axx,axy,popdyncol;
 	XPutImage(phdisplay,phwindow,phwindowGC,phimage,0,0,0,0,phimage->width,phimage->height);
 }
 
-int DrawSpaceTime(lay,ypos)
-int lay,ypos;
+int DrawSpaceTime(int lay,int ypos)
 {
     int x,mx,my;
     long offset=0;
@@ -686,7 +682,7 @@ int ClearSpaceTime()
     XPutImage(stdisplay,stwindow,stwindowGC,stimage,0,0,0,0,stimage->width,stimage->height);
 }
 
-int DrawLayer(kk) int kk;
+int DrawLayer(int kk)
 {
     int k,x,y,mx,my;
     long offset=0;

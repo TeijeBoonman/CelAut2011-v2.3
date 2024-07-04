@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "control_ol.h"
 
 char **state;
 char **newstate;
@@ -14,7 +15,7 @@ static int ny[9] = { 0,-1, 1, 0, 0,-1, 1,-1, 1};
 /* neighbor procedures */
 
 
-int RandMoore(x,y) int x,y;
+int RandMoore(int x,int y)
 {
     int ran;
 
@@ -22,7 +23,7 @@ int RandMoore(x,y) int x,y;
     return(state[x+nx[ran]][y+ny[ran]]);
 }
 
-int Moore(x,y) int x,y;
+int Moore(int x,int y)
 {
     int sum = 0,i;
 
@@ -31,7 +32,7 @@ int Moore(x,y) int x,y;
     return(sum);
 }
 
-int CountMoore(n,x,y) int n,x,y;
+int CountMoore(int n,int x,int y)
 {
     int sum = 0,i;
 
@@ -40,7 +41,7 @@ int CountMoore(n,x,y) int n,x,y;
     return(sum);
 }
 
-int RandVonn(x,y) int x,y;
+int RandVonn(int x,int y)
 {
     int ran;
 
@@ -48,7 +49,7 @@ int RandVonn(x,y) int x,y;
     return(state[x+nx[ran]][y+ny[ran]]);
 }
 
-int Vonn(x,y) int x,y;
+int Vonn(int x,int y)
 {
     int sum = 0,i;
 
@@ -57,7 +58,7 @@ int Vonn(x,y) int x,y;
     return(sum);
 }
 
-int CountVonn(n,x,y) int n,x,y;
+int CountVonn(int n,int x,int y)
 {
     int sum = 0,i;
 
@@ -73,7 +74,7 @@ void InitRand()
 
 /* border procedures */
 
- void AsynTorus(x,y) int x,y;
+ void AsynTorus(int x,int y)
  {
       state[x][0] = state[x][yfield];
       state[x][yfield+1] = state[x][1];
@@ -85,7 +86,7 @@ void InitRand()
       state[xfield+1][yfield+1] = state[1][1];
  }
 
- void AsynEcho(x,y) int x,y;
+ void AsynEcho(int x,int y)
  {
       state[x][0] = state[x][1];
       state[x][yfield+1] = state[x][yfield];
@@ -135,7 +136,7 @@ void InitRand()
 
  /* diffusion */
 
- void TurnLeft(x,y) int x,y;
+ void TurnLeft(int x,int y)
  {
       char dummy;
 
@@ -146,7 +147,7 @@ void InitRand()
       state[x+1][y] = dummy;
  }
 
- void TurnRight(x,y) int x,y;
+ void TurnRight(int x,int y)
  {
       char dummy;
 
@@ -157,7 +158,7 @@ void InitRand()
       state[x][y+1] = dummy;
  }
 
- void DoTurn(x,y) int x,y;
+ void DoTurn(int x,int y)
  {
       if (Uniform() < 0.5)
 	 TurnLeft(x,y);
@@ -439,7 +440,7 @@ void RecordNumber()
      fclose(fp);
  }
 
- void RecordGrowth(spec) int spec;
+ void RecordGrowth(int spec) 
  {
       FILE *fopen(), *fp;
       char name[50];
