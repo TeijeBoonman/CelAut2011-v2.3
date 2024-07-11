@@ -234,7 +234,7 @@ void ReShuffle()
  {
       int  x,y,n,i;
       float *perc;
-
+	  //This function leaks memory.
       perc = (float *)calloc(species,sizeof(float));
       perc[species-1] = 100.;
       printf("\n");
@@ -542,7 +542,7 @@ void ShowControlPanel()
      long k;
 
      /* Initialisatie */
-
+	printf("reached\n");
      InitConstants();
      state = (char **)calloc(xfield+2,sizeof(char *));
      for (x=0; x <= xfield+1; x++)
@@ -552,6 +552,7 @@ void ShowControlPanel()
 	 newstate[x] = (char *)calloc(yfield+2,sizeof(char));
      thetime=0;
      if (graphics) OpenGraphics(xfield,yfield);
+	 printf("reached\n");
      if (popdyn) {
 		 fprintf(stderr, "Trying to open popdyn\n");
 		 

@@ -51,6 +51,7 @@ static unsigned long white, black, foreground, background;
 static unsigned long phwhite, phblack, phforeground, phbackground;
 static unsigned long stwhite, stblack, stforeground, stbackground;
 static XColor *colors;
+static XColor *png_colors;
 
 static Colormap new_colormap;
 static char *image_data;
@@ -138,6 +139,7 @@ void ReadColorTable()
    fclose(fpc);
 }
 
+
 void MakeColorMap()
 {
    int i,colormap_size;
@@ -169,7 +171,8 @@ void MakeColorMap()
     for (i=0; i <= 255 && i < colormap_size; i++)
 		XAllocColor(display,new_colormap,&colors[i]);
 
-}   
+}  
+
    
 void PHMakeColorMap()
 {
@@ -590,6 +593,45 @@ int DrawMajorField()
     XPutImage(display,window,windowGC,image,0,0,0,0,image->width,image->height);
 }
 
+
+void ReadPngColorTable()
+{  
+   int i,k=0;
+   int p,q,r;
+   char name[50];
+   FILE *fopen(),*fpc;
+
+   sprintf(name,"default.ctb");
+   while ((fpc = fopen(name,"r")) == NULL) {
+         fprintf(stdout,"colormap '%s' not found, try again\n",name);
+         fprintf(stdout,"name colormap : "); fflush(stdout);
+         scanf("%s",name);
+   }
+   while (fscanf(fpc,"%d",&i) != EOF) {
+         fscanf(fpc,"%d %d %d\n",&p,&q,&r);
+         png_colors[i].red=p*255;
+         png_colors[i].green=q*255;
+         png_colors[i].blue=r*255;
+   }
+   fclose(fpc);
+}
+void MakePngColorMap()
+{
+   int i,colormap_size;
+
+   colormap_size = 256;
+   if ((png_colors = (XColor *)calloc(colormap_size,sizeof(XColor))) == NULL) {
+      fprintf(stderr, "No memory for setting up png colormap\n");
+      exit(1);
+   }
+   for (i=0; i < colormap_size; i++) {
+       png_colors[i].pixel = i;
+       png_colors[i].flags = DoRed | DoGreen | DoBlue;
+   }
+     ReadPngColorTable();
+
+}    
+
 void WriteField(char *fname) {
 	
 	
@@ -620,6 +662,7 @@ void WriteField(char *fname) {
 												  (png_voidp)NULL,
 												  (png_error_ptr)NULL,
 												  (png_error_ptr)NULL);
+	//This function leaks memory.
 	png_infop info_ptr = png_create_info_struct (png_ptr);
 	png_init_io(png_ptr, fp);
 	png_set_IHDR(png_ptr, info_ptr, scale*xfield, scale*yfield,
@@ -627,27 +670,9 @@ void WriteField(char *fname) {
 				 PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 	png_write_info(png_ptr,info_ptr);
 	// data to hold true colour image
-	unsigned char *png_image =
-    (unsigned char *)malloc(3*scale*scale*xfield*yfield*sizeof(unsigned char));
-	/* int colormap_size=256;
-     static XColor *png_colors=0;
-     if (!png_colors) {
-     // We allocate colors upon the first call only
-     // so do not free png_colors!
-     if ((png_colors = (XColor *)malloc(colormap_size*sizeof(XColor))) == NULL) {
-     fprintf(stderr,"WriteField: No memory for setting up colormap.\n");
-     }
-     for (i=0; i < colormap_size; i++) {
-     png_colors[i].pixel = i;
-     png_colors[i].flags = DoRed | DoGreen | DoBlue;
-     }
-     ReadColorTable(png_colors);
-     for (i=0;i<colormap_size;i++) {
-     XColor col;
-     col =png_colors[i];
-     fprintf(stderr, "Color %d: %d, %d, %d\n",i,col.red,col.green,col.blue);
-     }
-     } */
+	unsigned char *png_image = (unsigned char *)malloc(3*scale*scale*xfield*yfield*sizeof(unsigned char));
+	 
+	MakePngColorMap();
 
     int x,y,mx,my;
 	for (y=1;y <= yfield; y++)  {
@@ -656,7 +681,7 @@ void WriteField(char *fname) {
                 
 				for (mx=0; mx < scale; mx++) {
 					XColor col;
-					col=colors[state[x][y]];
+					col=png_colors[state[x][y]];
 					//fprintf(stderr,"[ %d: %d, %d, %d ]",state[x][y], col.red,col.green,col.blue );
 					png_image[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 ] = col.red/256;
 					png_image[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 + 1] = col.green/256;
@@ -672,10 +697,9 @@ void WriteField(char *fname) {
 	png_write_end(png_ptr, info_ptr);
     png_destroy_write_struct(&png_ptr,(png_infopp)NULL);
     free(png_image);
+	free(png_colors);
     fclose(fp);
 }
-
-
 
 
 
