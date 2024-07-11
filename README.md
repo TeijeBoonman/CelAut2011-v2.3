@@ -343,3 +343,5 @@ Plots the state to file \[filename\] plots the state of the
 </div>
 
 > Mixes all states in the CA.
+
+Some of the code in this implementation was written (in part) using AI tools, such as ChatGPT.
