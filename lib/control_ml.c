@@ -686,6 +686,7 @@ void ShowControlPanel()
 
      /* Initialisatie */
      InitConstants(); 
+	 InitPngMemory();
      title = (char **)calloc(graphics+1,sizeof(char *));
      for (k=0;k<graphics;++k) 
           title[k]=(char *)calloc(50,sizeof(char));

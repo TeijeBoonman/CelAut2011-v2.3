@@ -61,6 +61,8 @@ static unsigned long phwhite, phblack, phforeground, phbackground;
 static unsigned long stwhite, stblack, stforeground, stbackground;
 static XColor *colors;
 static XColor *png_colors;
+unsigned char *png_image_CA;
+static int colormap_size=256;
 
 static Colormap new_colormap;
 static char **image_data;
@@ -152,6 +154,8 @@ int CloseGraphics()
         XDestroyWindow(display[k], window[k]);
         XCloseDisplay(display[k]);
      }
+    free(png_image_CA);
+	free(png_colors);
 }
 
 int ClosePopDyn()
@@ -759,9 +763,6 @@ void WriteLayer(char *fname, int layer) {
 				 PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 	png_write_info(png_ptr,info_ptr);
 	
-	// data to hold true colour image
-	unsigned char *png_image =
-    (unsigned char *)malloc(3*scale*scale*xfield*yfield*sizeof(unsigned char));
 	
 	MakePngColorMap();
     
@@ -775,12 +776,12 @@ void WriteLayer(char *fname, int layer) {
 					XColor col;
 					col=png_colors[state[layer][x][y]];
 					//fprintf(stderr,"[ %d: %d, %d, %d ]",state[x][y], col.red,col.green,col.blue );
-					png_image[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 ] = col.red/256;
-					png_image[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 + 1] = col.green/256;
-					png_image[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 + 2] = col.blue/256;
+					png_image_CA[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 ] = col.red/256;
+					png_image_CA[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 + 1] = col.green/256;
+					png_image_CA[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 + 2] = col.blue/256;
 				}
 			}
-			png_bytep ptr = png_image + ((y-1)*scale+my)*3*xfield;
+			png_bytep ptr = png_image_CA + ((y-1)*scale+my)*3*xfield;
             
 			png_write_rows(png_ptr, &ptr, 1);
 		}
@@ -789,8 +790,7 @@ void WriteLayer(char *fname, int layer) {
     
 	png_write_end(png_ptr, info_ptr);
     png_destroy_write_struct(&png_ptr,(png_infopp)NULL);
-    free(png_image);
-	free(png_colors);
+	free(info_ptr);
     fclose(fp);
 }
 
@@ -817,13 +817,8 @@ void ReadPngColorTable()
 }
 void MakePngColorMap()
 {
-   int i,colormap_size;
+   int i;
 
-   colormap_size = 256;
-   if ((png_colors = (XColor *)calloc(colormap_size,sizeof(XColor))) == NULL) {
-      fprintf(stderr, "No memory for setting up png colormap\n");
-      exit(1);
-   }
    for (i=0; i < colormap_size; i++) {
        png_colors[i].pixel = i;
        png_colors[i].flags = DoRed | DoGreen | DoBlue;
@@ -831,6 +826,15 @@ void MakePngColorMap()
      ReadPngColorTable();
 
 }    
+void InitPngMemory()
+{
+	// data to hold true colour image
+	png_image_CA = (unsigned char *)malloc(3*scale*scale*xfield*yfield*sizeof(unsigned char));
+	if ((png_colors = (XColor *)calloc(colormap_size,sizeof(XColor))) == NULL) {
+    fprintf(stderr, "No memory for setting up png colormap\n");
+    exit(1);
+   }
+} 
 
 void WriteField(char *fname) {
 	
@@ -869,9 +873,6 @@ void WriteField(char *fname) {
 				 PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 	png_write_info(png_ptr,info_ptr);
 	
-	// data to hold true colour image
-	unsigned char *png_image =
-    (unsigned char *)malloc(3*scale*scale*xfield*yfield*sizeof(unsigned char));
 	
 	MakePngColorMap();
     
@@ -891,12 +892,12 @@ void WriteField(char *fname) {
 					XColor col;
 					col=png_colors[c];
 					//fprintf(stderr,"[ %d: %d, %d, %d ]",state[x][y], col.red,col.green,col.blue );
-					png_image[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 ] = col.red/256;
-					png_image[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 + 1] = col.green/256;
-					png_image[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 + 2] = col.blue/256;
+					png_image_CA[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 ] = col.red/256;
+					png_image_CA[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 + 1] = col.green/256;
+					png_image_CA[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 + 2] = col.blue/256;
 				}
 			}
-			png_bytep ptr = png_image + ((y-1)*scale+my)*3*xfield;
+			png_bytep ptr = png_image_CA + ((y-1)*scale+my)*3*xfield;
             
 			png_write_rows(png_ptr, &ptr, 1);
 		}
@@ -905,8 +906,7 @@ void WriteField(char *fname) {
     
 	png_write_end(png_ptr, info_ptr);
     png_destroy_write_struct(&png_ptr,(png_infopp)NULL);
-    free(png_image);
-	free(png_colors);
+	free(info_ptr);
     fclose(fp);
 }
 
@@ -983,7 +983,7 @@ void WriteFieldLayerOffset(char *fname, int layer_offset) {
     png_write_info(png_ptr,info_ptr);
     
     // data to hold true colour image
-    unsigned char *png_image =
+    unsigned char *png_image_CA =
     (unsigned char *)malloc(3*scale*scale*xfield*yfield*sizeof(unsigned char));
     
     int x,y,mx,my,c,k;
@@ -1002,12 +1002,12 @@ void WriteFieldLayerOffset(char *fname, int layer_offset) {
                     XColor col;
                     col=colors[c];
                     //fprintf(stderr,"[ %d: %d, %d, %d ]",state[x][y], col.red,col.green,col.blue );
-                    png_image[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 ] = col.red/256;
-                    png_image[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 + 1] = col.green/256;
-                    png_image[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 + 2] = col.blue/256;
+                    png_image_CA[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 ] = col.red/256;
+                    png_image_CA[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 + 1] = col.green/256;
+                    png_image_CA[ ((x-1)*scale+mx)*3 + ((y-1)*scale+my)*xfield*3 + 2] = col.blue/256;
                 }
             }
-            png_bytep ptr = png_image + ((y-1)*scale+my)*3*xfield;
+            png_bytep ptr = png_image_CA + ((y-1)*scale+my)*3*xfield;
             
             png_write_rows(png_ptr, &ptr, 1);
         }
@@ -1016,7 +1016,7 @@ void WriteFieldLayerOffset(char *fname, int layer_offset) {
     
     png_write_end(png_ptr, info_ptr);
     png_destroy_write_struct(&png_ptr,(png_infopp)NULL);
-    free(png_image);
+    free(png_image_CA);
 	free(png_colors);
     fclose(fp);
 }

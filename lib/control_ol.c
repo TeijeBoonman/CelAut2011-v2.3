@@ -543,6 +543,7 @@ void ShowControlPanel()
 
      /* Initialisatie */
      InitConstants();
+	 InitPngMemory();
      state = (char **)calloc(xfield+2,sizeof(char *));
      for (x=0; x <= xfield+1; x++)
 	 state[x] = (char *)calloc(yfield+2,sizeof(char));
