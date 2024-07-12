@@ -1,8 +1,8 @@
-libdir=lib
+libdir=/home/teije/lib
 
 if test $libdir = `pwd`
 then
-  echo Do not run CELAUT from the CELAUT-directory
+  echo "Do not run CELAUT from the CELAUT-directory"
   exit
 fi
 
@@ -31,13 +31,22 @@ esac
  
 if test ! -f $g
 then
-  echo "missing librabry:  $g"
-  echo "goto celaut root directory and type: make install"
+  echo "Missing library: $g"
+  echo "Goto celaut root directory and type: make install"
   exit
 fi
 
-echo "please wait for compilation of:  $m"
+echo "Please wait for compilation of: $m"
 
 export CELAUTLIB=$g
 make $m
-./$m
+
+# Determine the name of the compiled executable
+executable="${m%.c}"
+
+if [ -f "$executable" ]; then
+  chmod +x "$executable"
+  ./"$executable"
+else
+  echo "Error: Compiled executable $executable not found"
+fi
