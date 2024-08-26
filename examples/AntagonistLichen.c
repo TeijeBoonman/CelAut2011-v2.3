@@ -226,7 +226,8 @@ else{
  {
 	 if((thetime>1 || Square==0)&&thetime%DiffusionFactorDown==0) Diffuse();
 //DrawField();
-if(thetime>1&&thetime%PhotoHz==0)ReportImage();
+
+if(thetime>1&&thetime%PhotoHz==0)ReportImage();
 	  //if(thetime>1&&thetime%StateHz==0) PrintState();
 	if(thetime>1&&thetime%StateHz==0) SpatialCorrelation();
 	 
@@ -251,7 +252,8 @@ else{
 			if(Number>=10000)sprintf(naam, "naam-0%d.png",  Number); */
 			char name[1024];
 			snprintf(name, 1023, "%d-%d-%d-%f-%f-%f-%f-%f-%f-%f-%f-%f-%f-%f.png",rseed, thetime, DiffusionFactorDown, AlgalSymbioticGrowth, FungalSymbioticGrowth, ParasiticGrowth, AlgalSoloGrowth, FungalSoloGrowth, ParasiteSoloGrowth, AlgalDeath, FungalDeath, ParasiteDeath, AntagonistDiscount, ResponseCost );
-			WriteField(name);
+
+			WriteField(name);
 		  /*}
 		  else{
 			  exit(0);
