@@ -1,0 +1,259 @@
+---
+title: "ALichenScript"
+output: html_document
+date: "2024-07-30"
+---
+
+
+```{r}
+##Code to load SimpleLichen data
+files <- list.files(path="//wsl.localhost/Ubuntu/home/teije/ALICEFOLDER/AntagonistLichen/Seed1/examples/SpatialCorrelation", pattern="*.txt", full.names=TRUE, recursive=FALSE)
+offset<-23
+time<-NULL
+Diff<-NULL
+ASymbiotic<-NULL
+FSymbiotic<-NULL
+PSymbiotic<-NULL
+ASolo<-NULL
+FSolo<-NULL
+PSolo<-NULL
+ADeath<-NULL
+FDeath<-NULL
+PDeath<-NULL
+seed<-NULL
+Adiscount<-NULL
+ResponseCost<-NULL
+files<-gsub("0-1000000-", "0-99-", files)
+files<-gsub("0-100000-", "0-98-", files)
+for(i in files){
+  seed<-c(seed, substr(i, 75+offset, 75+offset))
+  if(!grepl("-100000-", i)){
+    time<-c(time, substr(i, 77+offset, 81+offset))
+    if(!(grepl("-4-", i))& !(grepl("-7-", i))){
+      Diff<-c(Diff, substr(i, 83+offset, 84+offset))
+      ASymbiotic<-c(ASymbiotic, substr(i,86+offset,93+offset))
+      FSymbiotic<-c(FSymbiotic, substr(i,95+offset,102+offset))
+      PSymbiotic<-c(PSymbiotic, substr(i,104+offset,111+offset))
+      ASolo<-c(ASolo, substr(i,113+offset,120+offset))
+      FSolo<-c(FSolo, substr(i,122+offset,129+offset))
+      PSolo<-c(PSolo, substr(i,131+offset,138+offset))
+      ADeath<-c(ADeath, substr(i,140+offset,147+offset))
+      FDeath<-c(FDeath, substr(i,149+offset,156+offset))
+      PDeath<-c(PDeath, substr(i,158+offset,165+offset))
+      Adiscount<-c(Adiscount, substr(i, 167+offset, 174+offset))
+      ResponseCost<-c(ResponseCost, substr(i, 176+offset, 183+offset))
+    }
+    else{
+      Diff<-c(Diff, substr(i, 83+offset, 83+offset))
+      ASymbiotic<-c(ASymbiotic, substr(i,85+offset,92+offset))
+      FSymbiotic<-c(FSymbiotic, substr(i,94+offset,101+offset))
+      PSymbiotic<-c(PSymbiotic, substr(i,103+offset,110+offset))
+      ASolo<-c(ASolo, substr(i,112+offset,119+offset))
+      FSolo<-c(FSolo, substr(i,121+offset,128+offset))
+      PSolo<-c(PSolo, substr(i,130+offset,137+offset))
+      ADeath<-c(ADeath, substr(i,139+offset,146+offset))
+      FDeath<-c(FDeath, substr(i,148+offset,155+offset))
+      PDeath<-c(PDeath, substr(i,157+offset,164+offset))
+      Adiscount<-c(Adiscount, substr(i, 166+offset, 173+offset))
+      ResponseCost<-c(ResponseCost, substr(i, 175+offset, 182+offset))
+    }
+  }
+  else{
+    time<-c(time, substr(i, 77+offset, 82+offset))
+    if(!grepl("-4-", i)& !grepl("-7-", i)){
+      Diff<-c(Diff, substr(i, 84+offset, 85+offset))
+      ASymbiotic<-c(ASymbiotic, substr(i,87+offset,94+offset))
+      FSymbiotic<-c(FSymbiotic, substr(i,96+offset,103+offset))
+      PSymbiotic<-c(PSymbiotic, substr(i,105+offset,112+offset))
+      ASolo<-c(ASolo, substr(i,114+offset,121+offset))
+      FSolo<-c(FSolo, substr(i,123+offset,130+offset))
+      PSolo<-c(PSolo, substr(i,132+offset,139+offset))
+      ADeath<-c(ADeath, substr(i,141+offset,148+offset))
+      FDeath<-c(FDeath, substr(i,150+offset,157+offset))
+      PDeath<-c(PDeath, substr(i,159+offset,166+offset))
+      Adiscount<-c(Adiscount, substr(i, 168+offset, 175+offset))
+      ResponseCost<-c(ResponseCost, substr(i, 177+offset, 184+offset))
+    }
+    else{
+      Diff<-c(Diff, substr(i, 84+offset, 84+offset))
+      ASymbiotic<-c(ASymbiotic, substr(i,86+offset,93+offset))
+      FSymbiotic<-c(FSymbiotic, substr(i,95+offset,102+offset))
+      PSymbiotic<-c(PSymbiotic, substr(i,104+offset,111+offset))
+      ASolo<-c(ASolo, substr(i,113+offset,120+offset))
+      FSolo<-c(FSolo, substr(i,122+offset,129+offset))
+      PSolo<-c(PSolo, substr(i,131+offset,138+offset))
+      ADeath<-c(ADeath, substr(i,140+offset,147+offset))
+      FDeath<-c(FDeath, substr(i,149+offset,156+offset))
+      PDeath<-c(PDeath, substr(i,158+offset,165+offset))
+      Adiscount<-c(Adiscount, substr(i, 167+offset, 174+offset))
+      ResponseCost<-c(ResponseCost, substr(i, 176+offset, 183+offset))
+    }
+  }
+  
+}
+files<-gsub("-99-", "-1000000-", files)
+files<-gsub("-98-", "-100000-", files)
+as.numeric(time)->time
+as.numeric(Diff)->Diff
+for (i in 1:length(Diff)){
+if(Diff[i]==98) {Diff[i]<-99}
+}
+as.numeric(ASymbiotic)->ASymbiotic
+as.numeric(FSymbiotic)->FSymbiotic
+as.numeric(PSymbiotic)->PSymbiotic
+as.numeric(ASolo)->ASolo
+as.numeric(FSolo)->FSolo
+as.numeric(PSolo)->PSolo
+as.numeric(ADeath)->ADeath
+as.numeric(FDeath)->FDeath
+as.numeric(PDeath)->PDeath
+as.numeric(Adiscount)->Adiscount
+as.numeric(ResponseCost)->ResponseCost
+data.frame(seed, time, Diff, ASymbiotic, FSymbiotic, PSymbiotic, ASolo, FSolo, PSolo, ADeath, FDeath, PDeath, Adiscount, ResponseCost)->ksiFrame
+ksiMIN<-NULL
+ksiMAX<-NULL
+for(i in files){
+  output<-read.csv(i, header=FALSE)
+  if(!is.na(output[3])){
+  c(ksiMIN,output$V1)->ksiMIN
+  c(ksiMAX,output$V2)->ksiMAX
+  }
+  else{
+    c(ksiMIN,NA)->ksiMIN
+    c(ksiMAX,NA)->ksiMAX
+  }
+}
+ksiFrame<-cbind(ksiFrame, data.frame(ksiMIN, ksiMAX))
+ksiFrame<-subset(ksiFrame, !is.na(ksiFrame$ksiMIN))
+ksiFrame<-subset(ksiFrame, ksiFrame$ksiMIN>0)
+ksiFrame<-subset(ksiFrame, ksiFrame$PSymbiotic!=0.21)
+```
+
+Loading complete, now we plot heatmaps
+```{r}
+##General bookkeeping stuff
+num_colors <- 128
+colors <- heat.colors(num_colors)
+colors <- c("black", colors)  # Add black for NA values
+
+# Create a custom function to handle NA values
+custom_col <- function(x) {
+  ifelse(is.na(x), 1, x+1)
+}
+library(fields)
+```
+
+```{r}
+##AntagonistLichen heatmapping print to file
+uniqueDisc<-sort(unique(ksiFrame$Adiscount))
+uniqueResp<-sort(unique(ksiFrame$ResponseCost))
+DvR<-array(as.numeric(c(1:5)),dim=c(length(unique(ksiFrame$Adiscount)),length(unique(ksiFrame$ResponseCost))))
+for(i in c(1:length(uniqueDisc))){
+  for(j in c(1:length(uniqueResp))){
+    DvR[i,j]<-median(subset(ksiFrame, ksiFrame$Adiscount==uniqueDisc[i] & ksiFrame$ResponseCost==uniqueResp[j] & ksiFrame$time==10000)[,15])
+  }
+}
+output_file <- "heatmapDvRA.png"
+png(filename = output_file, width = 800, height = 600)
+image.plot(1:length(uniqueResp), 1:length(uniqueDisc), custom_col(t(DvR)),
+           xlab = "",
+           ylab = "",
+           col = colors,
+           axis.args = list(at = seq(min(DvR, na.rm = TRUE), max(DvR, na.rm = TRUE), length.out = 5), labels = round(seq(min(DvR, na.rm = TRUE), max(DvR, na.rm = TRUE), length.out = 5), 2)), axes=FALSE)
+title(main = "Interaction Distance as a function
+      of 1-Response Cost and Parasite growth", cex.main=1.5)
+mtext(side = 1, text = "1-Response Cost", line = 4, cex = 1.8)  # Adjust 'line' to move x-axis title down
+mtext(side = 2, text = "Parasite growth", line = 2.5, cex = 1.8)  # Adjust 'line' to move y-axis title right
+axis(1, at = 1:length(uniqueResp), labels = uniqueResp, las = 2, cex.axis=1.5)
+axis(2, at = 1:length(uniqueDisc), labels = uniqueDisc, las = 2, cex.axis=1.5)
+box()
+dev.off()
+```
+
+
+
+```{r}
+##AntagonistLichen
+# Loop through each unique value and create a plot: Resp in DvR
+for (i in 1:length(uniqueResp)) {
+  dummyframe <- subset(ksiFrame, 
+                       ResponseCost == uniqueResp[i] &
+                       time == 10000)
+output_file <- paste("ADvR.Resp=", uniqueResp[i],".png")
+png(filename = output_file, width = 800, height = 600)
+par(mar = c(5, 5, 3, 10), xpd = TRUE)
+  plot(dummyframe$Adiscount, dummyframe$ksiMIN,
+       main = paste("1-Response cost =", uniqueResp[i]),
+       xlab = "Parasite growth",
+       ylab = expression("lower bound of " * xi),
+       cex.main = 3, cex = 2, cex.axis = 2, cex.lab = 2, col = "blue", type = "n")
+  
+  # Add boxplots
+  medians <- numeric(length(uniqueDisc))
+  colors <- character(length(uniqueDisc))
+  
+  for (j in 1:length(uniqueDisc)) {
+    subset_data <- dummyframe$ksiMIN[dummyframe$Adiscount == uniqueDisc[j]]
+    if (length(subset_data) > 0) {
+      median_value <- median(subset_data)
+      medians[j] <- median_value
+      # Normalize the median value to a range [0, 1] for coloring (adjust as needed)
+      norm_median <- (median_value - min(ksiFrame$ksiMIN)) / (max(ksiFrame$ksiMIN) - min(ksiFrame$ksiMIN))
+      # Use a color ramp to get colors based on the median value
+      box_color <- rgb(1 - norm_median, 0, norm_median, 0.5)
+      colors[j] <- box_color
+      boxplot(subset_data, add = TRUE, at = uniqueDisc[j], axes = FALSE, col = box_color, boxwex = 0.1)  # Increase box width with boxwex
+    }
+  }
+  
+  # Add a legend
+  color_legend <- colorRampPalette(c("red", "purple"))(10)
+  legend("topright", inset = c(-0.2, 0), legend = round(seq(min(dummyframe$ksiMIN), max(dummyframe$ksiMIN), length.out = 10), 2), 
+         fill = color_legend, title = "Median Value", xpd = TRUE)
+  dev.off()
+}
+# Loop through each unique value and create a plot: Disc in DvR
+for (i in 1:length(uniqueDisc)) {
+  dummyframe <- subset(ksiFrame, 
+                       ksiFrame$Adiscount==uniqueDisc[i] &
+                       time == 10000)
+output_file <- paste("ADvR.Disc=", uniqueDisc[i],".png")
+png(filename = output_file, width = 800, height = 600)
+par(mar = c(5, 5, 3, 10), xpd = TRUE)
+  plot(dummyframe$ResponseCost, dummyframe$ksiMIN,
+       main = paste("Parasite growth = ", uniqueDisc[i]),
+       xlab = "1-Response Cost",
+       ylab = expression("lower bound of " * xi),
+       cex.main = 3, cex = 2, cex.axis = 2, cex.lab = 2, col = "blue", type = "n")
+  
+  # Add boxplots
+  medians <- numeric(length(uniqueResp))
+  colors <- character(length(uniqueResp))
+  
+  for (j in 1:length(uniqueResp)) {
+    subset_data <- dummyframe$ksiMIN[dummyframe$ResponseCost == uniqueResp[j]]
+    if (length(subset_data) > 0) {
+      median_value <- median(subset_data)
+      medians[j] <- median_value
+      # Normalize the median value to a range [0, 1] for coloring (adjust as needed)
+      norm_median <- (median_value - min(ksiFrame$ksiMIN)) / (max(ksiFrame$ksiMIN) - min(ksiFrame$ksiMIN))
+      # Use a color ramp to get colors based on the median value
+      box_color <- rgb(1 - norm_median, 0, norm_median, 0.5)
+      colors[j] <- box_color
+      boxplot(subset_data, add = TRUE, at = uniqueResp[j], axes = FALSE, col = box_color, boxwex = .1)  # Increase box width with boxwex
+    }
+  }
+  
+  # Add a legend
+  color_legend <- colorRampPalette(c("red", "purple"))(10)
+  legend("topright", inset = c(-0.2, 0), legend = round(seq(min(dummyframe$ksiMIN), max(dummyframe$ksiMIN), length.out = 10), 2), 
+         fill = color_legend, title = "Median Value", xpd = TRUE)
+  dev.off()
+}
+
+```
+
+
+
+
+

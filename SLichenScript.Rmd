@@ -1,0 +1,475 @@
+---
+title: "SLichenAnalysisScript"
+output: html_document
+date: "2024-06-17"
+---
+
+
+```{r}
+##Code to load SimpleLichen data
+files <- list.files(path="//wsl.localhost/Ubuntu/home/teije/ALICEFOLDER/SimpleLichen/CelAut2011-1/examples/SpatialCorrelation", pattern="*.txt", full.names=TRUE, recursive=FALSE)
+offset<-26
+time<-NULL
+Diff<-NULL
+ASymbiotic<-NULL
+FSymbiotic<-NULL
+PSymbiotic<-NULL
+ASolo<-NULL
+FSolo<-NULL
+PSolo<-NULL
+ADeath<-NULL
+FDeath<-NULL
+PDeath<-NULL
+seed<-NULL
+files<-gsub("-1000000-", "-99-", files)
+for(i in files){
+  seed<-c(seed, substr(i, 75+offset, 75+offset))
+  if(!grepl("-100000-", i)){
+    time<-c(time, substr(i, 77+offset, 81+offset))
+    if(!(grepl("-4-", i))& !(grepl("-7-", i))){
+      Diff<-c(Diff, substr(i, 83+offset, 84+offset))
+      ASymbiotic<-c(ASymbiotic, substr(i,86+offset,93+offset))
+      FSymbiotic<-c(FSymbiotic, substr(i,95+offset,102+offset))
+      PSymbiotic<-c(PSymbiotic, substr(i,104+offset,111+offset))
+      ASolo<-c(ASolo, substr(i,113+offset,120+offset))
+      FSolo<-c(FSolo, substr(i,122+offset,129+offset))
+      PSolo<-c(PSolo, substr(i,131+offset,138+offset))
+      ADeath<-c(ADeath, substr(i,140+offset,147+offset))
+      FDeath<-c(FDeath, substr(i,149+offset,156+offset))
+      PDeath<-c(PDeath, substr(i,158+offset,165+offset))
+    }
+    else{
+      Diff<-c(Diff, substr(i, 83+offset, 83+offset))
+      ASymbiotic<-c(ASymbiotic, substr(i,85+offset,92+offset))
+      FSymbiotic<-c(FSymbiotic, substr(i,94+offset,101+offset))
+      PSymbiotic<-c(PSymbiotic, substr(i,103+offset,110+offset))
+      ASolo<-c(ASolo, substr(i,112+offset,119+offset))
+      FSolo<-c(FSolo, substr(i,121+offset,128+offset))
+      PSolo<-c(PSolo, substr(i,130+offset,137+offset))
+      ADeath<-c(ADeath, substr(i,139+offset,146+offset))
+      FDeath<-c(FDeath, substr(i,148+offset,155+offset))
+      PDeath<-c(PDeath, substr(i,157+offset,164+offset))
+    }
+  }
+  else{
+    time<-c(time, substr(i, 77+offset, 82+offset))
+    if(!grepl("-4-", i)& !grepl("-7-", i)){
+      Diff<-c(Diff, substr(i, 84+offset, 85+offset))
+      ASymbiotic<-c(ASymbiotic, substr(i,87+offset,94+offset))
+      FSymbiotic<-c(FSymbiotic, substr(i,96+offset,103+offset))
+      PSymbiotic<-c(PSymbiotic, substr(i,105+offset,112+offset))
+      ASolo<-c(ASolo, substr(i,114+offset,121+offset))
+      FSolo<-c(FSolo, substr(i,123+offset,130+offset))
+      PSolo<-c(PSolo, substr(i,132+offset,139+offset))
+      ADeath<-c(ADeath, substr(i,141+offset,148+offset))
+      FDeath<-c(FDeath, substr(i,150+offset,157+offset))
+      PDeath<-c(PDeath, substr(i,159+offset,166+offset))
+    }
+    else{
+      Diff<-c(Diff, substr(i, 84+offset, 84+offset))
+      ASymbiotic<-c(ASymbiotic, substr(i,86+offset,93+offset))
+      FSymbiotic<-c(FSymbiotic, substr(i,95+offset,102+offset))
+      PSymbiotic<-c(PSymbiotic, substr(i,104+offset,111+offset))
+      ASolo<-c(ASolo, substr(i,113+offset,120+offset))
+      FSolo<-c(FSolo, substr(i,122+offset,129+offset))
+      PSolo<-c(PSolo, substr(i,131+offset,138+offset))
+      ADeath<-c(ADeath, substr(i,140+offset,147+offset))
+      FDeath<-c(FDeath, substr(i,149+offset,156+offset))
+      PDeath<-c(PDeath, substr(i,158+offset,165+offset))
+    }
+  }
+  
+}
+files<-gsub("-99-", "-1000000-", files)
+as.numeric(time)->time
+as.numeric(Diff)->Diff
+as.numeric(ASymbiotic)->ASymbiotic
+as.numeric(FSymbiotic)->FSymbiotic
+as.numeric(PSymbiotic)->PSymbiotic
+as.numeric(ASolo)->ASolo
+as.numeric(FSolo)->FSolo
+as.numeric(PSolo)->PSolo
+as.numeric(ADeath)->ADeath
+as.numeric(FDeath)->FDeath
+as.numeric(PDeath)->PDeath
+data.frame(seed, time, Diff, ASymbiotic, FSymbiotic, PSymbiotic, ASolo, FSolo, PSolo, ADeath, FDeath, PDeath)->ksiFrame
+ksiMIN<-NULL
+ksiMAX<-NULL
+for(i in files){
+  output<-read.csv(i, header=FALSE)
+  if(!is.na(output[3])){
+  c(ksiMIN,output$V1)->ksiMIN
+  c(ksiMAX,output$V2)->ksiMAX
+  }
+  else{
+    c(ksiMIN,NA)->ksiMIN
+    c(ksiMAX,NA)->ksiMAX
+  }
+}
+ksiFrame<-cbind(ksiFrame, data.frame(ksiMIN, ksiMAX))
+ksiFrame<-subset(ksiFrame, !is.na(ksiFrame$ksiMIN))
+ksiFrame<-subset(ksiFrame, ksiFrame$ksiMIN>0)
+ksiFrameDeath<-subset(ksiFrame, ksiFrame$Diff==10 &ksiFrame$ASymbiotic==0.1 & ksiFrame$FSymbiotic==0.1)
+ksiFrameDvP<-subset(ksiFrame, ksiFrame$ASymbiotic==0.1 & ksiFrame$FSymbiotic==0.1 & ksiFrame$FDeath==0.008 & ksiFrame$ADeath==0.008)
+ksiFrameAvF<-subset(ksiFrame, ksiFrame$Diff==10 & ksiFrame$PSymbiotic==0.2 &ksiFrame$FDeath==0.008 & ksiFrame$ADeath==0.008)
+```
+
+Loading complete, now we plot heatmaps
+```{r}
+##General bookkeeping stuff
+num_colors <- 128
+colors <- heat.colors(num_colors)
+colors <- c("black", colors)  # Add black for NA values
+
+# Create a custom function to handle NA values
+custom_col <- function(x) {
+  ifelse(is.na(x), 1, x+1)
+}
+library(fields)
+```
+
+```{r}
+##SimpleLichen heatmapping print to file
+uniqueDiff<-sort(unique(ksiFrameDvP$Diff))
+uniquePsym<-sort(unique(ksiFrameDvP$PSymbiotic))
+DvP<-array(as.numeric(c(1:5)),dim=c(length(unique(ksiFrameDvP$Diff)),length(unique(ksiFrameDvP$PSymbiotic))))
+for(i in c(1:length(uniqueDiff))){
+  for(j in c(1:length(uniquePsym))){
+    DvP[i,j]<-median(subset(ksiFrameDvP, ksiFrameDvP$Diff==uniqueDiff[i] & ksiFrameDvP$PSymbiotic==uniquePsym[j] & ksiFrameDvP$time==10000)[,13])
+  }
+}
+output_file <- "heatmapDvPS.png"
+png(filename = output_file, width = 800, height = 600)
+image.plot(1:length(uniquePsym), 1:length(uniqueDiff), custom_col(t(DvP)),
+           xlab = "",
+           ylab = "",
+           col = colors,
+           axis.args = list(at = seq(min(DvP, na.rm = TRUE), max(DvP, na.rm = TRUE), length.out = 5), labels = round(seq(min(DvP, na.rm = TRUE), max(DvP, na.rm = TRUE), length.out = 5), 2)), axes=FALSE)
+title(main = "Interaction Distance as a function
+      of Parasitic Growth rate and Diffusion", cex.main=1.5)
+mtext(side = 1, text = "Probability of parasite reproduction", line = 4, cex = 1.8)  # Adjust 'line' to move x-axis title down
+mtext(side = 2, text = "1/rate of diffusion", line = 2.5, cex = 1.8)  # Adjust 'line' to move y-axis title right
+axis(1, at = 1:length(uniquePsym), labels = uniquePsym, las = 2, cex.axis=1.5)
+axis(2, at = 1:length(uniqueDiff), labels = uniqueDiff, las = 2, cex.axis=1.5)
+box()
+dev.off()
+
+uniqueAg<-sort(unique(ksiFrameAvF$ASymbiotic))
+uniqueFg<-sort(unique(ksiFrameAvF$FSymbiotic))
+AvF<-array(as.numeric(c(1:10)),dim=c(length(unique(ksiFrameAvF$ASymbiotic)),length(unique(ksiFrameAvF$FSymbiotic))))
+for(i in c(1:length(uniqueAg))){
+  for(j in c(1:length(uniqueFg))){
+    AvF[i,j]<-median(subset(ksiFrameAvF, ksiFrameAvF$ASymbiotic==uniqueAg[i] & ksiFrameAvF$FSymbiotic==uniqueFg[j]& ksiFrameAvF$time==10000)[,13])
+  }
+}
+output_file <- "heatmapAvFS.png"
+png(filename = output_file, width = 800, height = 600)
+par(mar=c(8,8,3,3))
+image.plot(1:length(uniqueFg), 1:length(uniqueAg), custom_col(t(AvF)),
+           xlab = "", 
+           ylab = "",
+           col = colors,
+           axis.args = list(at = seq(min(AvF, na.rm = TRUE), max(AvF, na.rm = TRUE), length.out = 5), labels = round(seq(min(AvF, na.rm = TRUE), max(AvF, na.rm = TRUE), length.out = 5), 2)), axes=FALSE)
+title(main = "Interaction Distance as a function
+      of Fungal and Algal Symbiotic Growth Rate", cex.main=1.5)
+mtext(side = 1, text = "Probability of Fungal Reproduction next to Algal cell", line = 6, cex = 1.5)  # Adjust 'line' to move x-axis title down
+mtext(side = 2, text = "Probability of Algal Reproduction next to Fungal cell", line = 6, cex = 1.5)  # Adjust 'line' to move y-axis title right
+axis(1, at = 1:length(uniqueFg), labels = uniqueFg, las = 2, cex.axis=1.5)
+axis(2, at = 1:length(uniqueAg), labels = uniqueAg, las = 2, cex.axis=1.5)
+box()
+dev.off()
+
+uniqueDeath<-sort(unique(ksiFrameDeath$ADeath))
+uniquePsym2<-sort(unique(ksiFrameDeath$PSymbiotic))
+Death<-array(as.numeric(c(1:5)),dim=c(length(unique(ksiFrameDeath$ADeath)),length(unique(ksiFrameDeath$PSymbiotic))))
+for(i in c(1:length(uniqueDeath))){
+  for(j in c(1:length(uniquePsym2))){
+    Death[i,j]<-median(subset(ksiFrameDeath, ksiFrameDeath$ADeath==uniqueDeath[i] & ksiFrameDeath$PSymbiotic==uniquePsym2[j]& ksiFrameDeath$time==10000)[,13])
+  }
+}
+output_file <- "heatmapDeathS.png"
+png(filename = output_file, width = 800, height = 600)
+par(mar=c(8,8,3,3))
+image.plot(1:length(uniquePsym2), 1:length(uniqueDeath), custom_col(t(Death)),
+           xlab = "", 
+           ylab = "",
+           col = colors,
+           axis.args = list(at = seq(min(Death, na.rm = TRUE), max(Death, na.rm = TRUE), length.out = 5),  labels = round(seq(min(Death, na.rm = TRUE), max(Death, na.rm = TRUE), length.out = 5), 2)), axes = FALSE)
+mtext(side = 1, text = "Probability of parasite reproduction", line = 4, cex = 1.8)  # Adjust 'line' to move x-axis title down
+mtext(side = 2, text = "Probability of Algal Death Rate", line = 4, cex = 1.8)  # Adjust 'line' to move y-axis title right
+title(main = "Interaction Distance as a function of Death Rate 
+      of Algal cells vs Parasitic Growth Rate", cex.main=1.5)
+axis(1, at = 1:length(uniquePsym2), labels = uniquePsym2, las = 2, cex.axis=1.5)
+axis(2, at = 1:length(uniqueDeath), labels = uniqueDeath, las = 2, cex.axis=1.5)
+box()
+dev.off()
+```
+
+
+
+```{r}
+##SimpleLichen
+# Loop through each unique value and create a plot: Psym in DvP
+for (i in 1:length(uniquePsym)) {
+  dummyframe <- subset(ksiFrameDvP, 
+                       PSymbiotic == uniquePsym[i] &
+                       ADeath == 0.008 &
+                       FDeath == 0.008 &
+                       ASymbiotic == 0.1 &
+                       FSymbiotic == 0.1 &
+                       time == 10000)
+output_file <- paste("SDvP.Psym=", uniquePsym[i],".png")
+png(filename = output_file, width = 800, height = 600)
+par(mar=c(5,5,3,3))
+  plot(dummyframe$Diff, dummyframe$ksiMIN,
+       main = paste("Probability of Parasite reproduction =", uniquePsym[i]),
+       xlab = "1/rate of diffusion",
+       ylab = expression("lower bound of " * xi),
+       cex.main = 3, cex = 2, cex.axis = 2, cex.lab = 2, col = "blue", type = "n")
+  
+  # Add boxplots
+  medians <- numeric(length(uniqueDiff))
+  colors <- character(length(uniqueDiff))
+  
+  for (j in 1:length(uniqueDiff)) {
+    subset_data <- dummyframe$ksiMIN[dummyframe$Diff == uniqueDiff[j]]
+    if (length(subset_data) > 0) {
+      median_value <- median(subset_data)
+      medians[j] <- median_value
+      # Normalize the median value to a range [0, 1] for coloring (adjust as needed)
+      norm_median <- (median_value - min(ksiFrameDvP$ksiMIN)) / (max(ksiFrameDvP$ksiMIN) - min(ksiFrameDvP$ksiMIN))
+      # Use a color ramp to get colors based on the median value
+      box_color <- rgb(1 - norm_median, 0, norm_median, 0.5)
+      colors[j] <- box_color
+      boxplot(subset_data, add = TRUE, at = uniqueDiff[j], axes = FALSE, col = box_color, boxwex = 5)  # Increase box width with boxwex
+    }
+  }
+  
+  # Add a legend
+  color_legend <- colorRampPalette(c("red", "purple"))(10)
+  legend("topright", legend = round(seq(min(dummyframe$ksiMIN), max(dummyframe$ksiMIN), length.out = 10), 2), 
+         fill = color_legend, title = "Median Value")
+  dev.off()
+}
+# Loop through each unique value and create a plot: Diff in DvP
+for (i in 1:length(uniqueDiff)) {
+  dummyframe <- subset(ksiFrameDvP, 
+                       ksiFrameDvP$Diff==uniqueDiff[i] &
+                       ADeath == 0.008 &
+                       FDeath == 0.008 &
+                       ASymbiotic == 0.1 &
+                       FSymbiotic == 0.1 &
+                       time == 10000)
+output_file <- paste("SDvP.Diff=", uniqueDiff[i],".png")
+png(filename = output_file, width = 800, height = 600)
+par(mar=c(5,5,3,3))
+  plot(dummyframe$PSymbiotic, dummyframe$ksiMIN,
+       main = paste("Diffusion rate of 1/", uniqueDiff[i]),
+       xlab = "Probability of Parasite Reproduction",
+       ylab = expression("lower bound of " * xi),
+       cex.main = 3, cex = 2, cex.axis = 2, cex.lab = 2, col = "blue", type = "n")
+  
+  # Add boxplots
+  medians <- numeric(length(uniquePsym))
+  colors <- character(length(uniquePsym))
+  
+  for (j in 1:length(uniquePsym)) {
+    subset_data <- dummyframe$ksiMIN[dummyframe$PSymbiotic == uniquePsym[j]]
+    if (length(subset_data) > 0) {
+      median_value <- median(subset_data)
+      medians[j] <- median_value
+      # Normalize the median value to a range [0, 1] for coloring (adjust as needed)
+      norm_median <- (median_value - min(ksiFrameDvP$ksiMIN)) / (max(ksiFrameDvP$ksiMIN) - min(ksiFrameDvP$ksiMIN))
+      # Use a color ramp to get colors based on the median value
+      box_color <- rgb(1 - norm_median, 0, norm_median, 0.5)
+      colors[j] <- box_color
+      boxplot(subset_data, add = TRUE, at = uniquePsym[j], axes = FALSE, col = box_color, boxwex = .01)  # Increase box width with boxwex
+    }
+  }
+  
+  # Add a legend
+  color_legend <- colorRampPalette(c("red", "purple"))(10)
+  legend("topright", legend = round(seq(min(dummyframe$ksiMIN), max(dummyframe$ksiMIN), length.out = 10), 2), 
+         fill = color_legend, title = "Median Value")
+  dev.off()
+}
+
+# Loop through each unique value and create a plot: Ag in AvF
+for (i in 1:length(uniqueAg)) {
+  dummyframe <- subset(ksiFrameAvF, 
+                       ksiFrameAvF$ASymbiotic==uniqueAg[i] &
+                       ADeath == 0.008 &
+                       FDeath == 0.008 &
+                       Diff == 10 &
+                       PSymbiotic == 0.15 &
+                       time == 10000)
+output_file <- paste("SAvF.Ag=", uniqueAg[i],".png")
+png(filename = output_file, width = 800, height = 600)
+par(mar=c(5,5,3,3))
+  plot(dummyframe$FSymbiotic, dummyframe$ksiMIN,
+       main = paste("Algal growth rate of", uniqueAg[i]),
+       xlab = "Fungal growth rate",
+       ylab = expression("lower bound of " * xi),
+       cex.main = 3, cex = 2, cex.axis = 2, cex.lab = 2, col = "blue", type = "n")
+  
+  # Add boxplots
+  medians <- numeric(length(uniqueFg))
+  colors <- character(length(uniqueFg))
+  
+  for (j in 1:length(uniqueFg)) {
+    subset_data <- dummyframe$ksiMIN[dummyframe$FSymbiotic == uniqueFg[j]]
+    if (length(subset_data) > 0) {
+      median_value <- median(subset_data)
+      medians[j] <- median_value
+      # Normalize the median value to a range [0, 1] for coloring (adjust as needed)
+      norm_median <- (median_value - min(ksiFrameAvF$ksiMIN)) / (max(ksiFrameAvF$ksiMIN) - min(ksiFrameAvF$ksiMIN))
+      # Use a color ramp to get colors based on the median value
+      box_color <- rgb(1 - norm_median, 0, norm_median, 0.5)
+      colors[j] <- box_color
+      boxplot(subset_data, add = TRUE, at = uniqueFg[j], axes = FALSE, col = box_color, boxwex = .01)  # Increase box width with boxwex
+    }
+  }
+  
+  # Add a legend
+  color_legend <- colorRampPalette(c("red", "purple"))(10)
+  legend("topright", legend = round(seq(min(dummyframe$ksiMIN), max(dummyframe$ksiMIN), length.out = 10), 2), 
+         fill = color_legend, title = "Median Value")
+  dev.off()
+}
+# Loop through each unique value and create a plot: Fg in AvF
+for (i in 1:length(uniqueFg)) {
+  dummyframe <- subset(ksiFrameAvF, 
+                       ksiFrameAvF$FSymbiotic==uniqueFg[i] &
+                       ADeath == 0.008 &
+                       FDeath == 0.008 &
+                       Diff == 10 &
+                       PSymbiotic == 0.15 &
+                       time == 10000)
+output_file <- paste("SAvF.Fg=", uniqueFg[i],".png")
+png(filename = output_file, width = 800, height = 600)
+par(mar=c(5,5,3,3))
+  plot(dummyframe$ASymbiotic, dummyframe$ksiMIN,
+       main = paste("Fungal growth rate of", uniqueAg[i]),
+       xlab = "Algal growth rate",
+       ylab = expression("lower bound of " * xi),
+       cex.main = 3, cex = 2, cex.axis = 2, cex.lab = 2, col = "blue", type = "n")
+  
+  # Add boxplots
+  medians <- numeric(length(uniqueAg))
+  colors <- character(length(uniqueAg))
+  
+  for (j in 1:length(uniqueAg)) {
+    subset_data <- dummyframe$ksiMIN[dummyframe$ASymbiotic == uniqueAg[j]]
+    if (length(subset_data) > 0) {
+      median_value <- median(subset_data)
+      medians[j] <- median_value
+      # Normalize the median value to a range [0, 1] for coloring (adjust as needed)
+      norm_median <- (median_value - min(ksiFrameAvF$ksiMIN)) / (max(ksiFrameAvF$ksiMIN) - min(ksiFrameAvF$ksiMIN))
+      # Use a color ramp to get colors based on the median value
+      box_color <- rgb(1 - norm_median, 0, norm_median, 0.5)
+      colors[j] <- box_color
+      boxplot(subset_data, add = TRUE, at = uniqueAg[j], axes = FALSE, col = box_color, boxwex = .01)  # Increase box width with boxwex
+    }
+  }
+  
+  # Add a legend
+  color_legend <- colorRampPalette(c("red", "purple"))(10)
+  legend("topright", legend = round(seq(min(dummyframe$ksiMIN), max(dummyframe$ksiMIN), length.out = 10), 2), 
+         fill = color_legend, title = "Median Value")
+  dev.off()
+}
+
+# Loop through each unique value and create a plot: Psym in Death
+for (i in 1:length(uniquePsym2)) {
+  dummyframe <- subset(ksiFrameDeath, 
+                       PSymbiotic == uniquePsym2[i] &
+                       Diff == 10 &
+                       ASymbiotic == 0.1 &
+                       FSymbiotic == 0.1 &
+                       time == 10000)
+output_file <- paste("SDeath.Psym=", uniquePsym2[i],".png")
+png(filename = output_file, width = 800, height = 600)
+par(mar=c(5,5,3,3))
+  plot(dummyframe$ADeath, dummyframe$ksiMIN,
+       main = paste("Probability of Parasite reproduction =", uniquePsym[i]),
+       xlab = "Algal Death Rate and Fungal Death Rate",
+       ylab = expression("lower bound of " * xi),
+       cex.main = 3, cex = 2, cex.axis = 2, cex.lab = 2, col = "blue", type="n")
+  
+  # Add boxplots
+  medians <- numeric(length(uniqueDeath))
+  colors <- character(length(uniqueDeath))
+  
+  for (j in 1:length(uniqueDeath)) {
+    subset_data <- dummyframe$ksiMIN[dummyframe$ADeath == uniqueDeath[j]]
+    if (length(subset_data) > 0) {
+      median_value <- median(subset_data)
+      medians[j] <- median_value
+      # Normalize the median value to a range [0, 1] for coloring (adjust as needed)
+      norm_median <- (median_value - min(ksiFrameDeath$ksiMIN)) / (max(ksiFrameDeath$ksiMIN) - min(ksiFrameDeath$ksiMIN))
+      # Use a color ramp to get colors based on the median value
+      box_color <- rgb(1 - norm_median, 0, norm_median, 0.5)
+      colors[j] <- box_color
+      boxplot(subset_data, add = TRUE, at = uniqueDeath[j], axes = FALSE, col = box_color, boxwex = 0.005)  # Increase box width with boxwex
+    }
+  }
+  
+  # Add a legend
+  color_legend <- colorRampPalette(c("red", "purple"))(10)
+  legend("topright", legend = round(seq(min(dummyframe$ksiMIN), max(dummyframe$ksiMIN), length.out = 10), 2), 
+         fill = color_legend, title = "Median Value")
+  dev.off()
+}
+
+# Loop through each unique value and create a plot: ADeath in Death
+for (i in 1:length(uniqueDeath)) {
+  dummyframe <- subset(ksiFrameDeath, 
+                       ADeath == uniqueDeath[i] &
+                       Diff == 10 &
+                       ASymbiotic == 0.1 &
+                       FSymbiotic == 0.1 &
+                       time == 10000)
+  
+  output_file <- paste("SDeath.ADeath=", uniqueDeath[i], ".png", sep = "")
+  png(filename = output_file, width = 800, height = 600)
+  
+  par(mar = c(5, 5, 3, 3))
+  
+  # Create scatter plot
+  plot(dummyframe$PSymbiotic, dummyframe$ksiMIN,
+       main = paste("Algal Death Rate =", uniqueDeath[i]),
+       xlab = "Probability of Parasite reproduction",
+       ylab = expression("lower bound of " * xi),
+       cex.main = 3, cex = 2, cex.axis = 2, cex.lab = 2, col = "blue", type = "n")  # Set type = "n" for no points
+  
+  # Add boxplots
+  medians <- numeric(length(uniquePsym2))
+  colors <- character(length(uniquePsym2))
+  
+  for (j in 1:length(uniquePsym2)) {
+    subset_data <- dummyframe$ksiMIN[dummyframe$PSymbiotic == uniquePsym2[j]]
+    if (length(subset_data) > 0) {
+      median_value <- median(subset_data)
+      medians[j] <- median_value
+      # Normalize the median value to a range [0, 1] for coloring (adjust as needed)
+      norm_median <- (median_value - min(ksiFrameDeath$ksiMIN)) / (max(ksiFrameDeath$ksiMIN) - min(ksiFrameDeath$ksiMIN))
+      # Use a color ramp to get colors based on the median value
+      box_color <- rgb(1 - norm_median, 0, norm_median, 0.5)
+      colors[j] <- box_color
+      boxplot(subset_data, add = TRUE, at = uniquePsym2[j], axes = FALSE, col = box_color, boxwex = 0.01)  # Increase box width with boxwex
+    }
+  }
+  
+  # Add a legend
+  color_legend <- colorRampPalette(c("red", "purple"))(10)
+  legend("topright", legend = round(seq(min(dummyframe$ksiMIN), max(dummyframe$ksiMIN), length.out = 10), 2), 
+         fill = color_legend, title = "Median Value")
+  
+  dev.off()
+}
+```
+
+
+
+
+
